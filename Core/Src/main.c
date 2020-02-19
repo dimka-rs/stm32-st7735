@@ -24,6 +24,7 @@
 #include "usart.h"
 #include "gpio.h"
 #include "st7735.h"
+#include "string.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -65,10 +66,12 @@ void SystemClock_Config(void);
   * @brief  The application entry point.
   * @retval int
   */
+
 int main(void)
 {
     /* USER CODE BEGIN 1 */
-
+    uint8_t frame[64];
+    uint16_t color = 0;
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -93,6 +96,7 @@ int main(void)
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
     st7735_init();
+    memset(frame, 0, sizeof(frame));
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -103,6 +107,9 @@ int main(void)
 
         /* USER CODE BEGIN 3 */
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        //st7735_send(CMD_RAMWR, frame, sizeof(frame));
+        st7735_fill(color);
+        color++;
         HAL_Delay(500);
     }
     /* USER CODE END 3 */
