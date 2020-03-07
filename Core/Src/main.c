@@ -103,10 +103,15 @@ int main(void)
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-        lcd_fill(color);
+        HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
         color++;
-        HAL_Delay(100);
+        lcd_fill(color);
+        lcd_rect(0, 0, 20, 20, 0x0000);
+        lcd_rect(60, 0, 20, 20, 0xF800);
+        lcd_rect(60, 140, 20, 20, 0x07E0);
+        lcd_rect(0, 140, 20, 20, 0x001F);
+        HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 1);
+        HAL_Delay(1000);
     }
     /* USER CODE END 3 */
 }

@@ -60,8 +60,22 @@ st7735_dot(st7735_driver *self, uint16_t x, uint16_t y, uint16_t color)
     data[3] = data[1];
     self->send(CMD_RASET, data, 4);
 
-    data[0] =  color >> 8;
-    data[1] =  color & 0xFF;
+    data[1] =  color >> 8;
+    data[0] =  color & 0xFF;
     self->send(CMD_RAMWR, data, 2);
+    return;
+}
+
+void
+st7735_rect(st7735_driver *self, uint16_t x, uint16_t y,
+            uint16_t w, uint16_t h, uint16_t color)
+{
+    for (uint16_t i = x + self->x; i < (x + w + self->x); i++)
+    {
+        for (uint16_t j = y + self->y; j < (y + h + self->y); j++)
+        {
+            st7735_dot(self, i, j, color);
+        }
+    }
     return;
 }
