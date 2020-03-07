@@ -8,7 +8,7 @@ extern SPI_HandleTypeDef hspi1;
 st7735_driver lcd;
 
 static void
-lcd_send(uint8_t cmd, uint8_t *data, uint8_t len)
+lcd_send(uint8_t cmd, uint8_t *data, uint16_t len, uint16_t count)
 {
     /* Select Chip */
     HAL_GPIO_WritePin(GPIOB, LCD_CS_Pin, GPIO_PIN_RESET);
@@ -20,7 +20,12 @@ lcd_send(uint8_t cmd, uint8_t *data, uint8_t len)
     HAL_GPIO_WritePin(GPIOB, LCD_DC_Pin, GPIO_PIN_SET);
     /* Send Data */
     if (data != NULL && len != 0)
-        HAL_SPI_Transmit(&hspi1, data, len, 10000);
+    {
+        do
+        {
+            HAL_SPI_Transmit(&hspi1, data, len, 10000);
+        } while (count--);
+    }
     /* Release Chip */
     HAL_GPIO_WritePin(GPIOB, LCD_CS_Pin, GPIO_PIN_SET);
     return;

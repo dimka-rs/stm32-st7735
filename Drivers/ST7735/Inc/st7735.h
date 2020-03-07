@@ -3,7 +3,7 @@
 
 typedef struct st7735_driver_struct
 {
-    void(*send)(uint8_t cmd, uint8_t *data, uint8_t len);
+    void(*send)(uint8_t cmd, uint8_t *data, uint16_t len, uint16_t count);
     void(*reset)(void);
     void(*wait_ms)(uint16_t ms);
     uint16_t x;

@@ -98,6 +98,16 @@ int main(void)
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
+    uint16_t colors[] = {
+        0x0000,
+        0xF800,
+        0x07E0,
+        0x001F,
+        0xFFE0,
+        0xF81F,
+        0x07FF,
+        0xFFFF,
+    };
     while (1)
     {
         /* USER CODE END WHILE */
@@ -106,12 +116,13 @@ int main(void)
         HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
         color++;
         lcd_fill(color);
-        lcd_rect(0, 0, 20, 20, 0x0000);
-        lcd_rect(60, 0, 20, 20, 0xF800);
-        lcd_rect(60, 140, 20, 20, 0x07E0);
-        lcd_rect(0, 140, 20, 20, 0x001F);
+        HAL_Delay(3000);
+        for (uint8_t i = 0; i < sizeof(colors)/sizeof(colors[0]); i++)
+        {
+            lcd_rect(0,  i * 20, 80, 20, colors[i]);
+        }
         HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 1);
-        HAL_Delay(1000);
+        HAL_Delay(3000);
     }
     /* USER CODE END 3 */
 }
