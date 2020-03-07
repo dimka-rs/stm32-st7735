@@ -42,6 +42,7 @@ Core/Src/spi.c \
 Core/Src/usart.c \
 Core/Src/stm32f1xx_it.c \
 Core/Src/stm32f1xx_hal_msp.c \
+Drivers/ST7735/Src/lcd.c \
 Drivers/ST7735/Src/st7735.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c \
 Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c \
@@ -184,14 +185,17 @@ $(BUILD_DIR):
 #######################################
 # clean up
 #######################################
+.PHONY: clean
 clean:
 	-rm -fR $(BUILD_DIR)
 
 #######
 # flash
 #######
-flash:
+.PHONY: flash
+flash: all
 	./st-flash write $(BUILD_DIR)/$(TARGET).bin 0x08000000
+	./st-flash reset
 
 #######################################
 # dependencies

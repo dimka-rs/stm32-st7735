@@ -1,28 +1,20 @@
 #ifndef ST7735_H
 #define ST7735_H
 
-uint8_t st7735_init(void);
-uint8_t st7735_send(uint8_t cmd, uint8_t *data, uint8_t len);
-uint8_t st7735_fill(uint16_t color);
-
-enum st7735_cmds
+typedef struct st7735_driver_struct
 {
-    CMD_NOP     = 0x00,
-    CMD_SWRESET = 0x01,
-    CMD_SLPIN   = 0x10,
-    CMD_SLPOUT  = 0x11,
-    CMD_PTLON   = 0x12,
-    CMD_NORON   = 0x13,
-    CMD_INVOFF  = 0x20,
-    CMD_INVON   = 0x21,
-    CMD_GAMSET  = 0x26,
-    CMD_DISPOFF = 0x28,
-    CMD_DISPON  = 0x29,
-    CMD_CASET   = 0x2A,
-    CMD_RASET   = 0x2B,
-    CMD_RAMWR   = 0x2C,
-    CMD_MADCTL  = 0x36,
-    CMD_COLMOD  = 0x3A,
-};
+    void(*send)(uint8_t cmd, uint8_t *data, uint8_t len);
+    void(*reset)(void);
+    void(*wait_ms)(uint16_t ms);
+    uint16_t x;
+    uint16_t y;
+    uint16_t w;
+    uint16_t h;
+} st7735_driver;
+
+void st7735_init(st7735_driver *self);
+void st7735_fill(st7735_driver *self, uint16_t color);
+void st7735_dot(st7735_driver *self, uint16_t x, uint16_t y, uint16_t color);
+void st7735_rect(st7735_driver *self, uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
 
 #endif /* ST7735_H */

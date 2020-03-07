@@ -23,8 +23,7 @@
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
-#include "st7735.h"
-#include "string.h"
+#include "lcd.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -70,8 +69,7 @@ void SystemClock_Config(void);
 int main(void)
 {
     /* USER CODE BEGIN 1 */
-    uint8_t frame[64];
-    uint16_t color = 0;
+    uint16_t color = 0xAAAA;
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -95,8 +93,7 @@ int main(void)
     MX_SPI1_Init();
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
-    st7735_init();
-    memset(frame, 0, sizeof(frame));
+    lcd_init();
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -107,10 +104,9 @@ int main(void)
 
         /* USER CODE BEGIN 3 */
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-        //st7735_send(CMD_RAMWR, frame, sizeof(frame));
-        st7735_fill(color);
+        lcd_fill(color);
         color++;
-        HAL_Delay(500);
+        HAL_Delay(100);
     }
     /* USER CODE END 3 */
 }
