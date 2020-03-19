@@ -23,7 +23,7 @@
 #include "spi.h"
 #include "usart.h"
 #include "gpio.h"
-#include "lcd.h"
+#include "app.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -69,7 +69,7 @@ void SystemClock_Config(void);
 int main(void)
 {
     /* USER CODE BEGIN 1 */
-    uint16_t color = 0xAAAA;
+
     /* USER CODE END 1 */
 
     /* MCU Configuration--------------------------------------------------------*/
@@ -93,36 +93,22 @@ int main(void)
     MX_SPI1_Init();
     MX_USART1_UART_Init();
     /* USER CODE BEGIN 2 */
-    lcd_init();
+
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-    uint16_t colors[] = {
-        0x0000,
-        0xF800,
-        0x07E0,
-        0x001F,
-        0xFFE0,
-        0xF81F,
-        0x07FF,
-        0xFFFF,
-    };
+
+    app_start();
     while (1)
     {
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        HAL_Delay(100);
+
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-        HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
-        color++;
-        lcd_fill(color);
-        HAL_Delay(3000);
-        for (uint8_t i = 0; i < sizeof(colors)/sizeof(colors[0]); i++)
-        {
-            lcd_rect(0,  i * 20, 80, 20, colors[i]);
-        }
-        HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 1);
-        HAL_Delay(3000);
+
     }
     /* USER CODE END 3 */
 }
