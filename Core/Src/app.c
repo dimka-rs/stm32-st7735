@@ -2,34 +2,126 @@
 #include "gpio.h"
 #include "lcd.h"
 
-uint16_t color = 0xFFFF;
-uint16_t colors[] = {
-    0x0000, /* white */
-    0xF800,
-    0x07E0,
-    0x001F,
-    0xFFE0,
-    0xF81F,
-    0x07FF,
-    0xFFFF, /* black */
+enum
+{
+    X_STEP = 20,
+    Y_STEP = 25,
+    X_SIZE = 15,
+    Y_SIZE = 20,
+    BORDER = 2,
 };
+
+
+enum
+{
+    WHITE = 0x0000,
+    GREEN = 0xF800, /* not sure */
+    BLUE = 0x07E0, /* not sure */
+    RED = 0x001F, /* not sure */
+    BLACK = 0xFFFF,
+};
+
+uint8_t digit_bits[] = {2, 4, 3, 4, 3, 4};
+
+static void
+draw_digit(uint8_t index, uint8_t digit, uint8_t bits, uint16_t color, uint16_t fill)
+{
+    uint16_t fill_color;
+
+    if (bits > 4)
+        return;
+
+    if ((digit >> bits) > 0)
+        return;
+
+    for (int i = 0; i < bits; i++)
+    {
+        if ( (digit & (1 << i)) > 0)
+            fill_color = color;
+        else
+            fill_color = fill;
+
+        /* outer */
+        lcd_rect(
+            i * X_STEP,
+            index * Y_STEP + Y_STEP / 2,
+            X_SIZE,
+            Y_SIZE,
+            color);
+
+        /* inner */
+        lcd_rect(
+            i * X_STEP + BORDER,
+            index * Y_STEP + Y_STEP / 2 + BORDER,
+            X_SIZE - BORDER * 2,
+            Y_SIZE - BORDER * 2,
+            fill_color);
+    }
+
+}
+
+static void
+inc_time(uint8_t *time)
+{
+
+    time[2]++;
+
+    /* seconds */
+    if (time[2] >= 60)
+    {
+        time[2] = 0;
+        time[1]++;
+    }
+
+    /* minutes */
+    if (time[1] >= 60)
+    {
+        time[1] = 0;
+        time[0]++;
+    }
+
+    /* hours */
+    if (time[0] >= 24)
+    {
+        time[0] = 0;
+    }
+}
+
+static void
+get_digits(uint8_t *time, uint8_t *digits)
+{
+    /* seconds */
+    digits[5] = time[2] % 10;
+    digits[4] = time[2] / 10;
+
+    /* minutes */
+    digits[3] = time[1] % 10;
+    digits[2] = time[1] / 10;
+
+    /* hours */
+    digits[1] = time[0] % 10;
+    digits[0] = time[0] / 10;
+}
 
 void
 app_start(void)
 {
+    uint8_t time[3] = { 0 };
+    uint8_t digits[6] = { 0 };
+
     lcd_init();
 
     while(1)
     {
-        lcd_fill(color);
-        HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 0);
-        HAL_Delay(3000);
+        inc_time(&time);
+        get_digits(&time, &digits);
 
-        for (uint8_t i = 0; i < sizeof(colors)/sizeof(colors[0]); i++)
+        lcd_fill(BLACK);
+        for (int idx = 0; idx < 6; idx++)
         {
-            lcd_rect(0,  i * 20, 80, 20, colors[i]);
+            draw_digit(idx, digits[idx], digit_bits[idx], WHITE, BLACK);
         }
-        HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, 1);
-        HAL_Delay(3000);
+        HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+        HAL_Delay(1000);
     }
 }
