@@ -26,8 +26,6 @@ uint8_t digit_bits[] = {2, 4, 3, 4, 3, 4};
 static void
 draw_digit(uint8_t index, uint8_t digit, uint8_t bits, uint16_t color, uint16_t fill)
 {
-    uint16_t fill_color;
-
     if (bits > 4)
         return;
 
@@ -36,10 +34,6 @@ draw_digit(uint8_t index, uint8_t digit, uint8_t bits, uint16_t color, uint16_t 
 
     for (int i = 0; i < bits; i++)
     {
-        if ( (digit & (1 << i)) > 0)
-            fill_color = color;
-        else
-            fill_color = fill;
 
         /* outer */
         lcd_rect(
@@ -50,12 +44,13 @@ draw_digit(uint8_t index, uint8_t digit, uint8_t bits, uint16_t color, uint16_t 
             color);
 
         /* inner */
-        lcd_rect(
-            i * X_STEP + BORDER,
-            index * Y_STEP + Y_STEP / 2 + BORDER,
-            X_SIZE - BORDER * 2,
-            Y_SIZE - BORDER * 2,
-            fill_color);
+        if ( (digit & (1 << i)) == 0)
+            lcd_rect(
+                i * X_STEP + BORDER,
+                index * Y_STEP + Y_STEP / 2 + BORDER,
+                X_SIZE - BORDER * 2,
+                Y_SIZE - BORDER * 2,
+                fill);
     }
 
 }
